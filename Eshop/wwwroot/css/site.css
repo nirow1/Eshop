@@ -1,18 +1,31 @@
-html {
-  font-size: 14px;
+:root {
+    font-size: 14px;
+    --accent-color: #ed6434;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
+.site-heading {
+    text-align: left;
+    margin-top: 3rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.nav-pills a.active,
+.form-check-input:checked {
+    background-color: black !important;
+    border-color: black !important;
+}
+
+.nav-pills a:not(.active) {
+    color: black !important;
 }

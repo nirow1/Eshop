@@ -4,47 +4,139 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Eshop</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Eshop.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Eshop</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-md navbar-light bg-light border-bottom box-shadow">
+            <div class="container">
+                <h1 class="my-2">
+                    <a asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/eshop_logo.svg" alt="eShop" style="max-width: 150px" />
+                    </a>
+                </h1>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse flex-column align-items-end pb-2" id="navbarSupportedContent">
+                    <ul class="navbar-nav justify-content-end">
+                        @*Zbylé položky menu*@
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" href="#">Kontakt</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" href="#">Články</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <span> @User.Identity.Name </span>
+                                }
+                                else
+                                {
+                                    <span>Účet</span>
+                                }
+                            </a>
                         </li>
                     </ul>
-                    <partial name="_LoginPartial" />
+                    <div class="d-flex justify-content-end w-100 navbar-nav">
+                        @*Formulář pro hledání produktů (použitý kontroler "Product" s metodou "Index" doplníme později)*@
+                        <div class="d-flex flex-fill justify-content-center navbar-nav">
+                            <form class="my-2 d-flex" style="min-width: 50%" asp-controller="Product" asp-action="Index" method="post">
+                                <div class="input-group">
+                                    <input class="form-control rounded" type="search" name="searchPhrase" aria-label="Search" aria-describedby="search-addon" id="header-search" placeholder="Název zboží..." value="" />
+                                    <button class="btn btn-outline-dark" type="submit"><i class="bi bi-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+
+                        @*Zobrazení tlačítka pro zobrazení obsahu nákupního košíku*@
+                        <form class="my-2 d-flex" asp-action="Index" asp-controller="Order">
+                            <button class="btn btn-outline-dark" type="submit">
+                                <i class="bi-cart me-1"></i>
+                                Košík
+                                <span class="badge bg-dark text-white ms-1 rounded-pill">
+                                    0 Kč
+                                </span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
+
+    @*Karusel na domovské stránce*@
+    @if (Context.Request.RouteValues.Values.Any(p => p is "Home") && Context.Request.RouteValues.Values.Any(p => p is "Index"))
+    {
+        <div class="carousel carousel-dark slide box-shadow" data-bs-ride="carousel">
+            <div class="carousel-inner mh-100">
+                <div class="carousel-item active mh-100">
+                    <div class="position-relative">
+                        <img src="/images/wall_1.jpg" class="d-block w-100" alt="Pozadí prvního prvku karuselu">
+                        <div class="position-absolute top-0 bottom-0 start-0 end-0 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-50 text-center">
+                            <h2 class="h1">Udělejte si radost</h2>
+                            <span>Moderními dekoracemi a doplňky</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item mh-100">
+                    <div class="position-relative">
+                        <img src="/images/wall_2.jpg" class="d-block w-100" alt="Pozadí druhého prvku karuselu">
+                        <div class="position-absolute top-0 bottom-0 start-0 end-0 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-50 text-center">
+                            <h2 class="h1">Potěšte své blízké</h2>
+                            <span>Dárečky od srdce</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item mh-100">
+                    <div class="position-relative">
+                        <img src="/images/wall_3.jpg" class="d-block w-100" alt="Pozadí třetího prvku karuselu">
+                        <div class="position-absolute top-0 bottom-0 start-0 end-0 d-flex flex-column justify-content-center align-items-center bg-white bg-opacity-50 text-center">
+                            <h2 class="h1">Proměňte vaše stolování</h2>
+                            <span>Stylovým nádobím</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="container flex-fill d-grid align-content-start">
+        @*Panel pro zobrazení aktuálních informací*@
+        <div class="sticky-top mt-4 flash-messages-container" style="grid-area: 1 / 1; height: min-content;">
+            <div class="alert alert-dismissible alert-info fade show">
+                Zobrazení aktuálních informací pro uživatele
+                <button class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        @*Hlavní obsah stránky*@
+        <main role="main" class="pb-3 row" style="grid-area: 1 / 1;">
+            @*Část pro vlastní obsah*@
+            @RenderBody()
+        </main>
+    </div>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Eshop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="border-top text-muted">
+        <div class="container py-4">
+            &copy; @DateTime.Now.Year - ITnetwork
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
