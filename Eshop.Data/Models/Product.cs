@@ -48,11 +48,14 @@ namespace Eshop.Data.Models
 
         [Display(Name = "Skrýt")]
         public bool Hidden {  get; set; }
+
+        public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
         
         public Product()
         {
             ImagesCount = 0;
             Hidden = false;
+            CategoryProducts = new List<CategoryProduct>();
         }
     }
 }

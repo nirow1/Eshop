@@ -32,5 +32,12 @@ namespace Eshop.Data.Models
         public bool Hidden { get; set; }
 
         public int? ParentCategoryId { get; set; }
+
+        public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
+
+        public Category()
+        {
+            CategoryProducts = new List<CategoryProduct>();
+        }
     }
 }

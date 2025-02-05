@@ -20,6 +20,22 @@ namespace Eshop.Data
 
             builder.Entity<Product>().Property(x => x.Price).HasColumnType("decimal(10,2)");
             builder.Entity<Product>().Property(x => x.OldPrice).HasColumnType("decimal(10,2)");
+
+            builder.Entity<CategoryProduct>().HasKey(cp => new 
+                {
+                    cp.CategoryId,
+                    cp.ProductId
+                });
+
+            builder.Entity<CategoryProduct>()
+                .HasOne(cp => cp.Category)
+                .WithMany(c => c.CategoryProducts)
+                .HasForeignKey(cp => cp.CategoryId);
+
+            builder.Entity<CategoryProduct>()
+                .HasOne(cp => cp.Category)
+                .WithMany(p => p.CategoryProducts)
+                .HasForeignKey(cp => cp.CategoryId);
         }
     }
 }
