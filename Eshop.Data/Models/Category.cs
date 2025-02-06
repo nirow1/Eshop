@@ -10,8 +10,33 @@ namespace Eshop.Data.Models
 {
     public class Category
     {
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key()]
         public int CategoryId { get; set; }
+
+        private string titlesPath = null;
+
+        [NotMapped]
+        public string TitlesPath
+        {
+            get
+            {
+                if (titlesPath is null)
+                {
+                    var builder = new StringBuilder();
+                    var current = ParentCategory;
+                    builder.Append(Title);
+                    while(current is not null)
+                    {
+                        builder.Insert(0, $"{current.Title} > ");
+                        current = current.ParentCategory;
+                    }
+
+                    titlesPath = builder.ToString();
+                }
+                return titlesPath;
+            }
+        }
 
         [Required(ErrorMessage = "Vyplňte url")]
         [StringLength(255, ErrorMessage = "Url je příliš dlouhá, max. 255 znaků")]
@@ -33,11 +58,17 @@ namespace Eshop.Data.Models
 
         public int? ParentCategoryId { get; set; }
 
+        [ForeignKey("ParentCategoryId")]
+        [InverseProperty("ChildCategories")]
+        public virtual Category ParentCategory { get; set; }
+        public virtual ICollection<Category> ChildCategories { get; set; }
         public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
+
 
         public Category()
         {
             CategoryProducts = new List<CategoryProduct>();
+            ChildCategories = new List<Category>();
         }
     }
 }

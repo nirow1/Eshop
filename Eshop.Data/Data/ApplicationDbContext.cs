@@ -36,6 +36,19 @@ namespace Eshop.Data
                 .HasOne(cp => cp.Category)
                 .WithMany(p => p.CategoryProducts)
                 .HasForeignKey(cp => cp.CategoryId);
+
+            AddTestingData(builder);
+        }
+
+        private void AddTestingData(ModelBuilder builder)
+        {
+            builder.Entity<Category>().HasData(
+                new Category { CategoryId = 1, Title = "Doplňky", Url = "doplnky", OrderNo = 1, Hidden = false },
+                new Category { CategoryId = 2, Title = "Stolování", Url = "stolovani", OrderNo = 4, Hidden = false },
+
+                new Category { CategoryId = 3, ParentCategoryId = 1, Title = "Závěsy", Url = "zavesy", OrderNo = 2, Hidden = false },
+                new Category { CategoryId = 4, ParentCategoryId = 1, Title = "Květináče", Url = "kvetinace", OrderNo = 3, Hidden = false },
+                new Category { CategoryId = 5, ParentCategoryId = 2, Title = "Hrníčky", Url = "hrnicky", OrderNo = 5, Hidden = false });
         }
     }
 }
