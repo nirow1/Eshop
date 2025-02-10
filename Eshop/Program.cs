@@ -1,5 +1,6 @@
 using Eshop.Data;
 using Eshop.Data.Models;
+using Eshop.Extentions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,5 +48,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}");
 app.MapRazorPages();
+
+await app.RegisterAdmin("admin@eshop.cz", "Admin123");
 
 app.Run();

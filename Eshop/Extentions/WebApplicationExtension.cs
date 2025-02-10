@@ -5,11 +5,29 @@ namespace Eshop.Extentions
 {
     public static class WebApplicationExtension
     {
-        private static async Task RegisterAdmin( this WebApplication wedApplication, string userEmail, string userPassword)
+        public static async Task RegisterAdmin( this WebApplication wedApplication, string userEmail, string userPassword)
         {
+            var adminRoleName = "Admin";
+            using(var scope = wedApplication.Services.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
+                if (!await roleManager.RoleExistsAsync(adminRoleName))
+                    await roleManager.CreateAsync(new IdentityRole(adminRoleName));
+
+                ApplicationUser user = await userManager.FindByEmailAsync(userEmail);
+
+                if (user is null)
+                {
+                    user = await CreateUser(userManager, userEmail, userPassword);
+                }
+
+                if(!await userManager.IsInRoleAsync(user, adminRoleName))
+                    await userManager.AddToRoleAsync(user, adminRoleName);
+            }
         }
-        private static async Task<ApplicationUser> CreateUser(UserManager<ApplicationUser> userManager, string userEmail, string password)
+        public static async Task<ApplicationUser> CreateUser(UserManager<ApplicationUser> userManager, string userEmail, string password)
         {
             ApplicationUser user = null;
             var result  = await userManager.CreateAsync(new ApplicationUser { UserName = userEmail, Email = userEmail}, password);
