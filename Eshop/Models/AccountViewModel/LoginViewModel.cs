@@ -17,6 +17,6 @@ namespace Eshop.Models.AccountViewModel
         public string Password { get; set; }
 
         [Display(Name = "Pamatuj si mě")]
-        public string RememberMe {  get; set; }
+        public bool RememberMe {  get; set; }
     }
 }
