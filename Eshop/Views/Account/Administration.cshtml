@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Administrace účtu";
+}
+
+<h2 class="site-heading">Administrace účtu</h2>
+
+<div class="d-flex flex-wrap gap-3 mb-3">
+    <a asp-action="Edit" class="btn btn-dark">
+        Správa údajů
+    </a>
+
+    <a asp-action="ChangePassword" class="btn btn-outline-dark">
+        Změna hesla
+    </a>
+
+    <a asp-action="LogOut" class="btn btn-outline-dark">
+        Odhlásit se
+    </a>
+</div>
+@if (this.Context.User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <a asp-action="ManageProduct" asp-controller="Product" class="btn btn-dark">
+            Přidat produkt
+        </a>
+    </div>
+    <div class="mb-3">
+        <a asp-action="ManageOrder" asp-controller="Order" class="btn btn-dark">
+            Správa objednávek
+        </a>
+    </div>
+    <div class="d-flex flex-wrap gap-3 mb-3">
+        <a asp-action="Create" asp-controller="Article" class="btn btn-dark">
+            Přidat článek
+        </a>
+
+        <a asp-action="Index" asp-controller="Article" class="btn btn-outline-dark">
+            Seznam článků
+        </a>
+    </div>
+    <div class="d-flex flex-wrap gap-3">
+        <a asp-action="Index" asp-controller="Settings" class="btn btn-dark">
+            Obecná nastavení
+        </a>
+
+        <a asp-action="Index" asp-controller="AccountingSetting" class="btn btn-outline-dark">
+            Účetní nastavení
+        </a>
+
+        <a asp-action="ManageCategories" asp-controller="Category" class="btn btn-outline-dark">
+            Správa kategorií
+        </a>
+    </div>
+}

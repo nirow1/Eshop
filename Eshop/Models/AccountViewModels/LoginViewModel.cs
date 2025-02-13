@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Eshop.Models.AccountViewModel
+namespace Eshop.Models.AccountViewModels
 {
     public class LoginViewModel
     {

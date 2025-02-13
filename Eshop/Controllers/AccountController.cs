@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Eshop.Data.Models;
-using Eshop.Models.AccountViewModel;
+using Eshop.Models.AccountViewModels;
 
 namespace Eshop.Controllers
 {
@@ -38,7 +38,7 @@ namespace Eshop.Controllers
             return View();
         }
 
-        [HttpGet]
+        [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
