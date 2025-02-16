@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Eshop.Data.Models;
 using Eshop.Models.AccountViewModels;
+using Eshop.Classes;
+using Eshop.Extentions;
 
 namespace Eshop.Controllers
 {
@@ -83,6 +85,8 @@ namespace Eshop.Controllers
 
             if (result.Succeeded)
             {
+                this.AddFlashMessage(new FlashMessage("Přihlášení proběhlo úspěšně", FlashMessageType.Success));
+
                 return string.IsNullOrWhiteSpace(returnUrl) ?
                     RedirectToAction("Administration") : RedirectToLocal(returnUrl);
             }
