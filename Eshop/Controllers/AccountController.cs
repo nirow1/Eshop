@@ -9,6 +9,7 @@ using Eshop.Extentions;
 namespace Eshop.Controllers
 {
     [Authorize]
+    [ExtentionsToMessageFiler]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -99,6 +100,7 @@ namespace Eshop.Controllers
         public async Task<IActionResult> LogOut()
         {
             await signInManager.SignOutAsync();
+            this.AddFlashMessage(new FlashMessage("Odhlášení proběhlo úspěšně", FlashMessageType.Success));
             return RedirectToAction("Index", "Home");
         }
 
