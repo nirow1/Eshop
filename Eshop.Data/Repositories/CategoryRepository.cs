@@ -11,5 +11,10 @@ namespace Eshop.Data.Repositories
     public class CategoryRepository: BaseRepository<Category>, ICategoryRepository
     {
         public CategoryRepository( ApplicationDbContext context): base(context) { }
+
+        public List<Category> GetAll(bool withHidden)
+        {
+            return withHidden ? GetAll() : dbSet.Where(c => !c.Hidden).ToList();
+        }
     }
 }

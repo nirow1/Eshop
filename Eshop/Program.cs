@@ -1,8 +1,12 @@
+using Eshop.Business.Managers;
 using Eshop.Data;
+using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
+using Eshop.Data.Repositories;
 using Eshop.Extentions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Eshop.Business.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +27,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 
 var app = builder.Build();
 

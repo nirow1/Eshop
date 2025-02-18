@@ -20,7 +20,7 @@ namespace Eshop.Data.Repositories
             dbSet = eshopContext.Set<TEntity>();
         }
 
-        void IRepository<TEntity>.Delete(int id)
+        public void Delete(int id)
         {
             TEntity entity = dbSet.Find(id);
             try
@@ -35,23 +35,23 @@ namespace Eshop.Data.Repositories
             }
         }
 
-        TEntity IRepository<TEntity>.FindById(int id)
+        public TEntity FindById(int id)
         {
             return dbSet.Find(id);
         }
 
-        List<TEntity> IRepository<TEntity>.GetAll()
+        public List<TEntity> GetAll()
         {
             return dbSet.ToList();
         }
 
-        void IRepository<TEntity>.Insert(TEntity entity)
+        public void Insert(TEntity entity)
         {
             dbSet.Add(entity);
             eshopContext.SaveChanges();
         }
 
-        void IRepository<TEntity>.Update(TEntity entity)
+        public void Update(TEntity entity)
         {
             if (dbSet.Contains(entity))
                 dbSet.Update(entity);
