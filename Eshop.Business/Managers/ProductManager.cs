@@ -12,20 +12,20 @@ namespace Eshop.Business.Managers
 {
     public class ProductManager : IProductManager
     {
-        private readonly IProductRepository ProductRepository;
+        private readonly IProductRepository productRepository;
         public ProductManager(IProductRepository productRepository)
         {
-            ProductRepository = productRepository;
+            this.productRepository = productRepository;
         }
 
         public Product FindProductById(int id)
         {
-            return ProductRepository.FindById(id);
+            return productRepository.FindById(id);
         }
 
         public Product FindProductByUrl(string url)
         {
-            return ProductRepository.FindByUrl(url);
+            return productRepository.FindByUrl(url);
         }
 
         public bool[] FindAssignedCategoriesToProduct(List<Category> availableCategories, List<CategoryProduct> assignedCategories, bool[] postedCategories)
@@ -48,22 +48,24 @@ namespace Eshop.Business.Managers
         {
             try
             {
-                ProductRepository.Delete(oldProduct.ProductId);
+                productRepository.Delete(oldProduct.ProductId);
             }
             catch (Exception)
             {
                 oldProduct.CategoryProducts.Clear();
                 oldProduct.Hidden = true;
-                ProductRepository.Update(oldProduct);
+                productRepository.Update(oldProduct);
             }
         }
 
         public void SaveProduct(Product product)
         {
-            var oldProduct  = ProductRepository.FindById(product.ProductId);
+            var oldProduct  = productRepository.FindById(product.ProductId);
 
             if (oldProduct.ProductId != 0)
                 product.ProductId = 0;
+
+            productRepository.Insert(product);
 
             if (oldProduct != null)
                 CleanProduct(oldProduct);

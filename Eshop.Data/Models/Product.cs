@@ -8,6 +8,11 @@ namespace Eshop.Data.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key()]
         public int ProductId { get; set; }
 
+        [Required(ErrorMessage = "vyplňte kód")]
+        [StringLength(255, ErrorMessage = "´Kód je příliš dlouhý, max. 255 znaků")]
+        [Display(Name = "´Kód produktu")]
+        public string Code { get; set; }
+
         [Required(ErrorMessage ="Vyplňte kód")]
         [StringLength(255, ErrorMessage ="Kód je příliš dlouý, max. 255 znajků.")]
         [RegularExpression(@"^[a-z0-9\-]+$", ErrorMessage = "Používejte jen malá písmena bez diakritiky nebo číslice")]
