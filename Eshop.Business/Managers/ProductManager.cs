@@ -62,7 +62,7 @@ namespace Eshop.Business.Managers
         {
             var oldProduct  = productRepository.FindById(product.ProductId);
 
-            if (oldProduct.ProductId != 0)
+            if (product.ProductId != 0)
                 product.ProductId = 0;
 
             productRepository.Insert(product);

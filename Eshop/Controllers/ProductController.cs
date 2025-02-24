@@ -87,7 +87,7 @@ namespace Eshop.Controllers
             categoryManager.UpdateProductCategories(model.Product.ProductId, selectedCategoryIds);
 
             this.AddFlashMessage("Produkt byl úspěšně uložen", FlashMessageType.Success);
-            return RedirectToAction(actionName: "Adminstration", controllerName: "Account");
+            return RedirectToAction(actionName: "Administration", controllerName: "Account");
         }
 
     }

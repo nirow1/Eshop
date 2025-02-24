@@ -33,6 +33,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IProductManager,  ProductManager>();
+builder.Services.AddScoped<IImageManager, ImageManager>();
 
 var app = builder.Build();
 
