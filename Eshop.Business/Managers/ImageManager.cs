@@ -1,5 +1,6 @@
 ﻿using Eshop.Business.Classes;
 using Eshop.Business.Interfaces;
+using Microsoft.AspNetCore.Http;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,46 @@ namespace Eshop.Business.Managers
     public class ImageManager : IImageManager
     {
         public string OutputDirectoryPath {  get; set; }
+
+        public IImageManager ConfigureOutputPath(string outputDirectoryPath)
+        {
+            OutputDirectoryPath = outputDirectoryPath;
+            return this;
+        }
+
+        public void ResizeImage(string oldPath, string newPath, int width = 0, int height = 0)
+        {
+            ReadOnlySpan<byte> resizedImageSpan;
+
+            using(var skReadStream = new SKFileStream(oldPath))
+            {
+                resizedImageSpan = ResizeImage(skReadStream, width, height);
+            }
+
+            using(var writeStream = new FileStream(newPath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                writeStream.Write(resizedImageSpan);
+            }
+        }
+
+        public void SaveImage(IFormFile file, string newFileName, ImageExtension extension, int width = 0, int height = 0)
+        {
+            ReadOnlySpan<byte> resizedImageSpan;
+
+            using (var skReadStream = new SKManagedStream(file.OpenReadStream()))
+            {
+                resizedImageSpan = ResizeImage(skReadStream, width, height, extension);
+            }
+
+            var filePath = Path.Combine(OutputDirectoryPath, $"{newFileName}.{ExtensionToString(extension)}");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+            using (var writeStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                writeStream.Write(resizedImageSpan);
+            }
+        }
 
         private ReadOnlySpan<byte> ResizeImage(SKStream ImageStream, int width = 0,  int height = 0, ImageExtension? newExtension = null)
         {
