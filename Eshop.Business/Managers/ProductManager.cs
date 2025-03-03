@@ -12,10 +12,18 @@ namespace Eshop.Business.Managers
 {
     public class ProductManager : IProductManager
     {
+        private const string ProductImagePath = "wwwroot/images/products/";
+        private const int ProductImageHeight = 1080;
+        private const int ProductThumbnailWidth = 480;
+
+        private readonly IImageManager imageManager;
+
         private readonly IProductRepository productRepository;
+
         public ProductManager(IProductRepository productRepository)
         {
             this.productRepository = productRepository;
+            this.imageManager = imageManager.ConfigureOutputPath(ProductImagePath);
         }
 
         public Product FindProductById(int id)
@@ -70,5 +78,74 @@ namespace Eshop.Business.Managers
             if (oldProduct != null)
                 CleanProduct(oldProduct);
         }
+
+        #region Private methods
+        private void EnsureProductDirectoryCreated(int productId)
+        {
+            string path = Path.Combine(ProductImagePath, productId.ToString());
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+        }
+
+        private string GetImageFileName(int productId, int imageIndex, bool full = true)
+        {
+            EnsureProductDirectoryCreated(productId);
+
+            string result = Path.Combine(productId.ToString(), $"{productId}_{imageIndex}");
+
+            if (full)
+                result = Path.Combine(ProductImagePath, $"{result}.{IProductManager.ProductImageExtentions}");
+
+            return result;
+        }
+        private string GetThumbnailFileName(int productId, bool full = true)
+        {
+            EnsureProductDirectoryCreated(productId);
+
+            string result = Path.Combine(productId.ToString(), $"{productId}_thumb");
+
+            if (full)
+                result = Path.Combine(ProductImagePath, $"{result}.{IProductManager.ProductThumbnailExtension}");
+
+            return result;
+        }
+
+        private void RemoveImageFile(int productId, int imageIndex)
+        {
+            string fileName = GetImageFileName(productId, imageIndex);
+            if(File.Exists(fileName))
+                File.Delete(fileName);
+        }
+
+        private void RemoveThubnailFile(int productId)
+        {
+            string thumbfileName = GetThumbnailFileName(productId);
+            if(File.Exists(thumbfileName))
+                File.Delete(thumbfileName);
+        }
+
+        private void RenameImage(int oldProductId, int oldImageIndex, int productId, int imageIndex)
+        {
+            string oldPath = GetImageFileName(oldProductId, oldImageIndex);
+            string newPath = GetImageFileName(productId, imageIndex);
+            if(File.Exists (oldPath))
+                File.Move(oldPath, newPath);
+        }
+
+        private void RenameProductImages(int oldProductId, int productId, int imagesCount)
+        {
+            if (imagesCount == 0)
+                return;
+
+            string oldThumbnailPath = GetThumbnailFileName(oldProductId);
+            string newThumbnailPath = GetThumbnailFileName(productId);
+
+            if(File.Exists (oldThumbnailPath))
+                File.Move(oldThumbnailPath, newThumbnailPath);
+
+            for (int i = 0; i < imagesCount; i++)
+                RenameImage(oldProductId, i, productId, i);
+        }
+        #endregion
     }
 }
