@@ -1,6 +1,7 @@
 ﻿using Eshop.Business.Interfaces;
 using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Eshop.Business.Managers
 {
     public class ProductManager : IProductManager
     {
-        private const string ProductImagePath = "wwwroot/images/products/";
+        private const string ProductImagePath = "wwwroot/Images/Products/";
         private const int ProductImageHeight = 1080;
         private const int ProductThumbnailWidth = 480;
 
@@ -20,7 +21,7 @@ namespace Eshop.Business.Managers
 
         private readonly IProductRepository productRepository;
 
-        public ProductManager(IProductRepository productRepository)
+        public ProductManager(IProductRepository productRepository, IImageManager imageManager)
         {
             this.productRepository = productRepository;
             this.imageManager = imageManager.ConfigureOutputPath(ProductImagePath);
@@ -52,7 +53,7 @@ namespace Eshop.Business.Managers
             return postedCategories;
         }
 
-        public void CleanProduct(Product oldProduct)
+        public void CleanProduct(Product oldProduct, bool removeImages = false)
         {
             try
             {
@@ -63,6 +64,14 @@ namespace Eshop.Business.Managers
                 oldProduct.CategoryProducts.Clear();
                 oldProduct.Hidden = true;
                 productRepository.Update(oldProduct);
+            }
+
+            if (removeImages)
+            {
+                int imagesCount = oldProduct.ImagesCount;
+                RemoveThumbnailFile(oldProduct.ProductId);
+                for (int i = 0; i < imagesCount; i++)
+                    RemoveImageFile(oldProduct.ProductId, i);
             }
         }
 
@@ -117,7 +126,7 @@ namespace Eshop.Business.Managers
                 File.Delete(fileName);
         }
 
-        private void RemoveThubnailFile(int productId)
+        private void RemoveThumbnailFile(int productId)
         {
             string thumbfileName = GetThumbnailFileName(productId);
             if(File.Exists(thumbfileName))
@@ -147,5 +156,66 @@ namespace Eshop.Business.Managers
                 RenameImage(oldProductId, i, productId, i);
         }
         #endregion
+
+        public void SaveProductImages(Product product, List<IFormFile> images, int? oldProductID, int? oldImagesCount)
+        {
+            if (images is null)
+                throw new Exception("Nepodařilo se najít žádné obrázky");
+
+            int imagesCount = 0;
+
+            if (oldProductID.HasValue)
+            {
+                imagesCount = oldImagesCount.Value;
+            }
+
+            for (int i = 0; i <= imagesCount; i++)
+            {
+                if (images[i] is null || !images[i].ContentType.ToLower().Contains("Image"))
+                    continue;
+
+                imageManager.SaveImage(
+                    images[i],
+                    GetImageFileName(product.ProductId, oldImagesCount.Value + i, full: false),
+                    Classes.ImageExtension.Png,
+                    height: ProductImageHeight);
+                
+                if(imagesCount == 0)
+                {
+                    imageManager.SaveImage(
+                        images[i],
+                        GetThumbnailFileName(product.ProductId, full: false),
+                        Classes.ImageExtension.Png,
+                        ProductThumbnailWidth);
+                }
+                imagesCount++;
+            }
+            product.ImagesCount = imagesCount;
+            productRepository.Update(product);
+        }
+
+        public void RemoveProductImage(int productId, int imageIndex)
+        {
+            var product = productRepository.FindById(productId);
+            if (imageIndex == 0)
+            {
+                RemoveThumbnailFile(productId);
+                string secondImagePath = GetThumbnailFileName(product.ProductId);
+                
+                if (File.Exists(secondImagePath))
+                {
+                    string thumbnailFileName = GetThumbnailFileName(product.ProductId);
+                    imageManager.ResizeImage(secondImagePath, thumbnailFileName, ProductThumbnailWidth);
+                }
+
+                RemoveImageFile(productId, imageIndex);
+
+                for (int i = imageIndex + 1; i < product.ImagesCount; i++)
+                    RenameImage(productId, i, productId, i - 1);
+
+                product.ImagesCount--;
+                productRepository.Update(product);
+            }
+        }
     }
 }

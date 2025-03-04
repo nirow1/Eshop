@@ -1,4 +1,5 @@
 ﻿using Eshop.Data.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ namespace Eshop.Business.Interfaces
             bool[] postedCategories);
 
         void SaveProduct(Product product);
-        void CleanProduct(Product oldProduct);
+        void CleanProduct(Product oldProduct, bool removeImages = false);
+
+        void SaveProductImages(Product product, List<IFormFile> images, int? oldProductId, int? oldImagesCount);
+
+        void RemoveProductImage(int productId, int imageIndex);
     }
 }
