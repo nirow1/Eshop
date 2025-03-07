@@ -45,5 +45,10 @@ namespace Eshop.Extentions
             }
             return html;
         }
+
+        public static string CreateImagePath(this IHtmlHelper helper, string imageName, string extension)
+        {
+            return $"/Images/Products/{imageName}.{extension}";
+        }
     }
 }

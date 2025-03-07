@@ -83,11 +83,22 @@ namespace Eshop.Controllers
                 }
             }
 
+            int oldProductId = model.Product.ProductId;
+            int oldImagesCount = model.Product.ImagesCount;
+
             productManager.SaveProduct(model.Product);
             categoryManager.UpdateProductCategories(model.Product.ProductId, selectedCategoryIds);
 
+            productManager.SaveProductImages(model.Product, model.UploadedImages, oldProductId, oldImagesCount);
+
             this.AddFlashMessage("Produkt byl úspěšně uložen", FlashMessageType.Success);
             return RedirectToAction(actionName: "Administration", controllerName: "Account");
+        }
+
+        [Authorize(Roles = "Admin")]
+        public void DeleteImage(int productID, int imageIndex)
+        {
+            productManager.RemoveProductImage(productID, imageIndex);
         }
 
     }

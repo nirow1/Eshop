@@ -1,8 +1,12 @@
-﻿@model Eshop.Models.ProductViewModels.ManageProductViewModel
+﻿@using Eshop.Business.Interfaces
+@using Eshop.Extentions
+@model Eshop.Models.ProductViewModels.ManageProductViewModel
 
 @{
     ViewData["Title"] = Model.FormCaption;
 }
+
+<link href="~/css/ManageProduct.css" rel="stylesheet" />
 
 <h2 class="site-heading">@Model.FormCaption</h2>
 
@@ -40,6 +44,15 @@
     </div>
 
     @*Část pro již přiřazené obrázky*@
+    <div id="product-images-administration" class="d-flex gap-2 flex-wrap">
+        @for (int i = 0; i < Model.Product.ImagesCount; i++)
+        {
+            <div class="rounded border p-1">
+                <img class="rounded" src="@Html.CreateImagePath($"{Model.Product.ProductId}/{Model.Product.ProductId}_{i}", IProductManager.ProductImageExtentions)" alt="@Model.Product.Title - @(i+1)" />
+                <a class="bi bi-trash btn btn-light px-1 py-0 m-2 position-absolute top-0 end-0" href="#" data-image-index="@i" aria-hidden="true"></a>
+            </div>
+        }
+    </div>
     <div id="product-images-administration" class="d-flex gap-2 flex-wrap">
     </div>
 
@@ -109,4 +122,5 @@
     @*TinyMCE*@
     <script src="//cdnjs.cloudflare.com/ajax/libs/tinymce/5.2.1/tinymce.min.js"></script>
     <script src="~/js/initTinyMCE.js"></script>
+    <script src="~/js/manageProduct.js"></script>
 }

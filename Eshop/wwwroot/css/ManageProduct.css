@@ -1,0 +1,13 @@
+﻿#product-images-administration img {
+    width: auto;
+    height: auto;
+    max-height: 128px;
+    vertical-align: middle;
+}
+
+#product-images-administration > div {
+    display: inline-block;
+    text-align: center;
+    margin-bottom: 10px;
+    position: relative;
+}

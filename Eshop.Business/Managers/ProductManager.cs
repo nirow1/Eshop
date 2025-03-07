@@ -2,12 +2,6 @@
 using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Eshop.Business.Managers
 {
@@ -167,6 +161,7 @@ namespace Eshop.Business.Managers
             if (oldProductID.HasValue)
             {
                 imagesCount = oldImagesCount.Value;
+                RenameProductImages(oldProductID.Value, product.ProductId, imagesCount);
             }
 
             for (int i = 0; i <= imagesCount; i++)
