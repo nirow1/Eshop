@@ -1,4 +1,5 @@
 ﻿using Eshop.Business.Interfaces;
+using Eshop.Business.Classes;
 using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
 using Microsoft.AspNetCore.Http;
@@ -97,7 +98,7 @@ namespace Eshop.Business.Managers
             string result = Path.Combine(productId.ToString(), $"{productId}_{imageIndex}");
 
             if (full)
-                result = Path.Combine(ProductImagePath, $"{result}.{IProductManager.ProductImageExtentions}");
+                result = Path.Combine(ProductImagePath, $"{result}.{IProductManager.ProductImageExtension}");
 
             return result;
         }
@@ -143,7 +144,7 @@ namespace Eshop.Business.Managers
             string oldThumbnailPath = GetThumbnailFileName(oldProductId);
             string newThumbnailPath = GetThumbnailFileName(productId);
 
-            if(File.Exists (oldThumbnailPath))
+            if(File.Exists(oldThumbnailPath))
                 File.Move(oldThumbnailPath, newThumbnailPath);
 
             for (int i = 0; i < imagesCount; i++)
@@ -164,15 +165,15 @@ namespace Eshop.Business.Managers
                 RenameProductImages(oldProductID.Value, product.ProductId, imagesCount);
             }
 
-            for (int i = 0; i <= imagesCount; i++)
+            for (int i = 0; i <= images.Count; i++)
             {
-                if (images[i] is null || !images[i].ContentType.ToLower().Contains("Image"))
+                if (images[i] is null || !images[i].ContentType.ToLower().Contains("image"))
                     continue;
 
                 imageManager.SaveImage(
                     images[i],
                     GetImageFileName(product.ProductId, oldImagesCount.Value + i, full: false),
-                    Classes.ImageExtension.Png,
+                    ImageExtension.Png,
                     height: ProductImageHeight);
                 
                 if(imagesCount == 0)
@@ -180,7 +181,7 @@ namespace Eshop.Business.Managers
                     imageManager.SaveImage(
                         images[i],
                         GetThumbnailFileName(product.ProductId, full: false),
-                        Classes.ImageExtension.Png,
+                        ImageExtension.Png,
                         ProductThumbnailWidth);
                 }
                 imagesCount++;
@@ -202,15 +203,14 @@ namespace Eshop.Business.Managers
                     string thumbnailFileName = GetThumbnailFileName(product.ProductId);
                     imageManager.ResizeImage(secondImagePath, thumbnailFileName, ProductThumbnailWidth);
                 }
-
-                RemoveImageFile(productId, imageIndex);
-
-                for (int i = imageIndex + 1; i < product.ImagesCount; i++)
-                    RenameImage(productId, i, productId, i - 1);
-
-                product.ImagesCount--;
-                productRepository.Update(product);
             }
+            RemoveImageFile(productId, imageIndex);
+
+            for (int i = imageIndex + 1; i < product.ImagesCount; i++)
+                RenameImage(productId, i, productId, i - 1);
+
+            product.ImagesCount--;
+            productRepository.Update(product);
         }
     }
 }

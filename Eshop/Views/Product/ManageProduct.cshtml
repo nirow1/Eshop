@@ -48,7 +48,7 @@
         @for (int i = 0; i < Model.Product.ImagesCount; i++)
         {
             <div class="rounded border p-1">
-                <img class="rounded" src="@Html.CreateImagePath($"{Model.Product.ProductId}/{Model.Product.ProductId}_{i}", IProductManager.ProductImageExtentions)" alt="@Model.Product.Title - @(i+1)" />
+                <img class="rounded" src="@Html.CreateImagePath($"{Model.Product.ProductId}/{Model.Product.ProductId}_{i}", IProductManager.ProductImageExtension)" alt="@Model.Product.Title - @(i+1)" />
                 <a class="bi bi-trash btn btn-light px-1 py-0 m-2 position-absolute top-0 end-0" href="#" data-image-index="@i" aria-hidden="true"></a>
             </div>
         }

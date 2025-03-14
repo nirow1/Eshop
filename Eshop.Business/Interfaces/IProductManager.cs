@@ -11,7 +11,7 @@ namespace Eshop.Business.Interfaces
     public interface IProductManager
     {
 
-        public const string ProductImageExtentions = "png";
+        public const string ProductImageExtension = "png";
         public const string ProductThumbnailExtension = "png";
         Product FindProductById(int id);
 

@@ -21,7 +21,7 @@ async function removeImage(image, images) {
         const nextImages = images.slice(images.indexOf(image) + 1, images.lenght);
         for (const nextImage of nextImages) {
             const newIndex = parseInt(nextImage.getAttribute("data-image-index")) - 1;
-            nextImage.setAttribute("data-iage-index", newIndex);
+            nextImage.setAttribute("data-image-index", newIndex);
         }
 
         image.parentElement.remove();

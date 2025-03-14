@@ -53,7 +53,7 @@ namespace Eshop.Business.Managers
         {
             using var skData = SKData.Create(ImageStream);
             using var codec = SKCodec.Create(skData);
-            using var bitmap = SKBitmap.Decode(codec);
+            using var bitmap = SKBitmap.Decode(skData);
 
             float newWidth = bitmap.Width;
             float newHeight = bitmap.Height;
@@ -66,7 +66,7 @@ namespace Eshop.Business.Managers
             if (width == 0 || height == 0)
             {
                 newWidth *= width > 0 ? widthResizeFactor : heightResizeFactor;
-                newHeight *= height > 0 ? widthResizeFactor : heightResizeFactor;
+                newHeight *= width > 0 ? widthResizeFactor : heightResizeFactor;
             }
 
             using var newBitmap = new SKBitmap((int)Math.Round(newWidth), (int)Math.Round(newHeight), bitmap.ColorType, bitmap.AlphaType);
