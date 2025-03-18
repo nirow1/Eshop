@@ -22,30 +22,6 @@ namespace Eshop.Extentions
             tempData[key] = JsonConvert.SerializeObject(obj, Formatting.Indented);
         }
 
-        public static IHtmlContent RenderFlashMessages(this IHtmlHelper helper)
-        {
-            var messageList = helper.ViewContext.TempData.DeserializeToObject<List<FlashMessage>>("Messages");
-
-            var html = new HtmlContentBuilder();
-
-            foreach ( var message in messageList)
-            {
-                var container = new TagBuilder("div");
-                container.AddCssClass($"alert alert-dismissible fade show alert-{message.MessageType.ToString().ToLower()}");
-                container.InnerHtml.SetContent(message.Message);
-
-                var dismissButton = new TagBuilder("button");
-                dismissButton.AddCssClass("btn-close");
-                dismissButton.Attributes.Add("type", "button");
-                dismissButton.Attributes.Add("data-bs-dismiss", "alert");
-                container.InnerHtml.AppendHtml(dismissButton);
-
-                html.AppendHtml(container);
-
-            }
-            return html;
-        }
-
         public static string CreateImagePath(this IHtmlHelper helper, string imageName, string extension)
         {
             return $"/Images/Products/{imageName}.{extension}";

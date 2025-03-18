@@ -1,0 +1,13 @@
+﻿@using Eshop.Business.Interfaces
+@using Eshop.Extentions
+
+<div class="navbar-light px-0 position-sticky bottom-0" style="top: 2rem;">
+    <nav class="navbar-nav">
+        @Html.RenderCategories(
+                 Context.RequestServices.GetService<ICategoryManager>().GetRootCategories(),
+                 Context.Request.Query
+                 .Where(p => p.Key == "categoryId" || p.Key == "CurrentCategoryId")
+                 .Select(p => p.Value)
+                 .FirstOrDefault())
+    </nav>
+</div>

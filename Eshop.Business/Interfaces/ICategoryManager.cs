@@ -6,5 +6,6 @@ namespace Eshop.Business.Interfaces
     {
         void UpdateProductCategories(int productId, IEnumerable<int> categories);
         List<Category> GetAll(bool withHidden = false);
+        List<Category> GetRootCategories();
     }
 }

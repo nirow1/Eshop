@@ -7,6 +7,7 @@ using Eshop.Extentions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Eshop.Business.Interfaces;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString)
-    .UseLazyLoadingProxies());
+    .UseLazyLoadingProxies()
+    .ConfigureWarnings(x => x.Ignore(CoreEventId.LazyLoadOnDisposedContextWarning)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -34,6 +36,8 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IProductManager,  ProductManager>();
 builder.Services.AddScoped<IImageManager, ImageManager>();
+
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

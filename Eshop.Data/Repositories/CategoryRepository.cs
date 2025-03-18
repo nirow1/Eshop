@@ -16,5 +16,12 @@ namespace Eshop.Data.Repositories
         {
             return withHidden ? GetAll() : dbSet.Where(c => !c.Hidden).ToList();
         }
+
+        public List<Category> GetRootCategories()
+        {
+            return dbSet.Where(c =>c.ParentCategory == null && !c.Hidden)
+                .OrderBy(c => c.OrderNo)
+                .ToList();
+        }
     }
 }

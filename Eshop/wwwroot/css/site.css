@@ -29,3 +29,13 @@ html {
 .nav-pills a:not(.active) {
     color: black !important;
 }
+
+/*...*/
+/* Akordeony */
+.accordion-button:not(.collapsed),
+.accordion-button:focus {
+    color: black;
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+}

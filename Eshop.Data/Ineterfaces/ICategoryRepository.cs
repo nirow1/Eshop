@@ -10,5 +10,7 @@ namespace Eshop.Data.Ineterfaces
     public interface ICategoryRepository : IRepository<Category>
     {
         List<Category> GetAll(bool withHidden);
+
+        List<Category> GetRootCategories();
     }
 }

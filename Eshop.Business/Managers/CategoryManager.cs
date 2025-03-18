@@ -1,6 +1,7 @@
 ﻿using Eshop.Business.Interfaces;
 using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
+using Microsoft.Extensions.Caching.Memory;
 
 
 namespace Eshop.Business.Managers
@@ -9,11 +10,15 @@ namespace Eshop.Business.Managers
     {
         private readonly ICategoryRepository categoryRepository;
         private readonly IProductRepository productRepository;
+        private readonly IMemoryCache memoryCache;
 
-        public CategoryManager(ICategoryRepository categoryRepository, IProductRepository productRepository)
+        private const string RootCategoriesKey = "RootCategories";
+
+        public CategoryManager(ICategoryRepository categoryRepository, IProductRepository productRepository, IMemoryCache memoryCache)
         {
             this.categoryRepository = categoryRepository;
             this.productRepository = productRepository;
+            this.memoryCache = memoryCache;
         }
 
         public void UpdateProductCategories(int productId, IEnumerable<int> categories)
@@ -48,6 +53,16 @@ namespace Eshop.Business.Managers
         public List<Category> GetAll(bool withHidden = false)
         {
             return categoryRepository.GetAll(withHidden);
+        }
+
+        public List<Category> GetRootCategories()
+        {
+            if (!memoryCache.TryGetValue(RootCategoriesKey, out List<Category> rootCategories))
+            {
+                rootCategories = categoryRepository.GetRootCategories();
+                memoryCache.Set(RootCategoriesKey, rootCategories, new DateTimeOffset(DateTime.Now.AddHours(1)));
+            }
+            return rootCategories;
         }
     }
 }

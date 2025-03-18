@@ -165,7 +165,7 @@ namespace Eshop.Business.Managers
                 RenameProductImages(oldProductID.Value, product.ProductId, imagesCount);
             }
 
-            for (int i = 0; i <= images.Count; i++)
+            for (int i = 0; i < images.Count; i++)
             {
                 if (images[i] is null || !images[i].ContentType.ToLower().Contains("image"))
                     continue;
