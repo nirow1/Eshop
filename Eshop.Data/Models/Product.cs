@@ -54,6 +54,13 @@ namespace Eshop.Data.Models
         [Display(Name = "Skrýt")]
         public bool Hidden {  get; set; }
 
+        [NotMapped]
+        public double Rating => 2.5;
+
+        [NotMapped]
+        public int DiscountPercent => OldPrice.HasValue && OldPrice.Value > Price ?
+            (int)Math.Round((OldPrice.Value - Price) / OldPrice.Value * 100) : 0; 
+
         public virtual ICollection<CategoryProduct> CategoryProducts { get; set; }
         
         public Product()

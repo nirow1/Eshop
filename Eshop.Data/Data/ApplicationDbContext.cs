@@ -42,6 +42,29 @@ namespace Eshop.Data
 
         private void AddTestingData(ModelBuilder builder)
         {
+            var product = new Product
+            {
+                ProductId = 17,
+                Code = "something",
+                Hidden = false,
+                Price = 500,
+                ImagesCount = 2,
+                Stock = 11,
+                Url = "zaves-sense-zeleny",
+                Title = "Závěs Sense, zelený",
+                ShortDescription = "Lorem ipsum dolor sit amet. Qui cumque harum a iure sapiente hic debitis blanditiis At vero voluptatem sit molestiae dolores et quas dolorum. Qui facilis impedit et ipsam sint sed numquam necessitatibus.",
+                Description = "<p>Lorem ipsum dolor sit amet. Qui cumque harum a iure sapiente hic debitis blanditiis At vero voluptatem sit molestiae dolores et quas dolorum. Qui facilis impedit et ipsam sint sed numquam necessitatibus ex autem omnis et saepe odio? Et cumque autem aut quas fugiat et animi saepe et nobis tempore et magni facere. </p><p>Non quisquam corrupti et dolorem provident ut cumque porro et error laudantium et labore autem. A quod nobis aut labore modi ut nemo modi in fugit dolorum non dolores quia non libero laudantium? Aut nemo maxime sed suscipit aspernatur aut dolores amet in iusto nostrum. </p>"
+            };
+
+            builder.Entity<Product>().HasData(
+                product
+                );
+
+            builder.Entity<CategoryProduct>().HasData(
+                new CategoryProduct { CategoryId = 1, ProductId = 17},
+                new CategoryProduct { CategoryId = 3, ProductId = 17}
+                );
+
             builder.Entity<Category>().HasData(
                 new Category { CategoryId = 1, Title = "Doplňky", Url = "doplnky", OrderNo = 1, Hidden = false },
                 new Category { CategoryId = 2, Title = "Stolování", Url = "stolovani", OrderNo = 4, Hidden = false },

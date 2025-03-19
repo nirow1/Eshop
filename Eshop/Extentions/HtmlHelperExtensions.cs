@@ -71,7 +71,7 @@ namespace Eshop.Extentions
             var ulTag = new TagBuilder("ul");
 
             ulTag.AddCssClass("accordion accordion-flush list-unstyled");
-            ulTag.Attributes.Add("ul", accordionId);
+            ulTag.Attributes.Add("id", accordionId);
 
             if (!string.IsNullOrWhiteSpace(parentAccordionId))
             {
@@ -114,7 +114,7 @@ namespace Eshop.Extentions
                 {
                     var anchorTag = CreateCategoryAnchorTag(category.Title, category.CategoryId);
 
-                    liTag.AddCssClass("nav-item ns-3 ps-1");
+                    liTag.AddCssClass("nav-item ms-3 ps-1");
                     liTag.InnerHtml.SetHtmlContent(anchorTag);
                 }
 
@@ -122,7 +122,7 @@ namespace Eshop.Extentions
             }
 
             var allLiTag = new TagBuilder("li");
-            var AllAnchorTag = CreateCategoryAnchorTag("Všecno", parentCategoryId);
+            var AllAnchorTag = CreateCategoryAnchorTag("Všechno", parentCategoryId);
             allLiTag.AddCssClass("nav-item ms-3 ps-1");
             allLiTag.InnerHtml.SetHtmlContent(AllAnchorTag);
             ulTag.InnerHtml.AppendHtml(allLiTag);
