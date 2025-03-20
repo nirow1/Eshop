@@ -1,4 +1,5 @@
-﻿using Eshop.Data.Models;
+﻿using Eshop.Data.Classes;
+using Eshop.Data.Models;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,21 @@ namespace Eshop.Business.Interfaces
             List<Category> availableCategories,
             List<CategoryProduct> assignedCategories,
             bool[] postedCategories);
+
+        List<Product> FindByCategoryId(int categoryId);
+        
+        List<Product> FindBySearchPhrase(string searchPhrase);
+        
+        List<Product> FindBy(
+            string searchPhrase = null,
+            int? categoryId = null,
+            string orderBy = OrderProductBy.Newest,
+            decimal startPrice = 0,
+            decimal endPrice = int.MaxValue,
+            bool onlyInStock = false,
+            bool onSale = false,
+            int count = int.MaxValue
+            );
 
         void SaveProduct(Product product);
         void CleanProduct(Product oldProduct, bool removeImages = false);

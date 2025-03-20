@@ -3,6 +3,7 @@ using Eshop.Business.Classes;
 using Eshop.Data.Ineterfaces;
 using Eshop.Data.Models;
 using Microsoft.AspNetCore.Http;
+using Eshop.Data.Classes;
 
 namespace Eshop.Business.Managers
 {
@@ -82,6 +83,21 @@ namespace Eshop.Business.Managers
             if (oldProduct != null)
                 CleanProduct(oldProduct);
         }
+
+        public List<Product> FindByCategoryId(int categoryId) => productRepository.FindAllBy(categoryId: categoryId);
+
+        public List<Product> FindBySearchPhrase(string searchPhrase) => productRepository.FindAllBy(searchPhrase);
+
+        public List<Product> FindBy(
+            string searchPhrase = null,
+            int? categoryId = null,
+            string orderBy = OrderProductBy.Newest,
+            decimal startPrice = 0,
+            decimal endPrice = int.MaxValue,
+            bool onlyInStock = false,
+            bool onSale = false,
+            int count = int.MaxValue
+            ) => productRepository.FindAllBy(searchPhrase, categoryId, startPrice, endPrice, onlyInStock, onSale, orderBy, count);
 
         #region Private methods
         private void EnsureProductDirectoryCreated(int productId)

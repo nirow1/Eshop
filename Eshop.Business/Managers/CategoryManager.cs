@@ -50,10 +50,9 @@ namespace Eshop.Business.Managers
             productRepository.Update(product);
         }
 
-        public List<Category> GetAll(bool withHidden = false)
-        {
-            return categoryRepository.GetAll(withHidden);
-        }
+        public Category GetCategoryById(int id) => categoryRepository.FindById(id);
+
+        public List<Category> GetAll(bool withHidden = false) => categoryRepository.GetAll(withHidden);
 
         public List<Category> GetRootCategories()
         {
