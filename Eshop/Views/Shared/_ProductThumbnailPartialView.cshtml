@@ -1,0 +1,101 @@
+﻿@model Eshop.Models.ProductViewModels.ProductIndexViewModel
+
+<div class="card product-card position-relative h-100 ">
+    <div>
+        @* Náhled produktu *@
+        @{
+            string imagePath = Model.Product.ImagesCount > 0 ?
+            @Html.CreateImagePath($"{Model.Product.ProductId}/{Model.Product.ProductId}_thumb", IProductManager.ProductThumbnailExtension) :
+            "";
+        }
+        <img class="card-img-top stretched-product-image square" src="@Url.Content(imagePath)" alt="Náhled produktu @Model.Product.Title">
+
+        <div class="card-body p-4">
+            <div class="text-center">
+
+                @* Název produktu *@
+                <h5 class="fw-bolder">@Model.Product.Title</h5>
+
+                @* Hodnocení produktu *@
+                @if (Model.Product.Rating > 0)
+                {
+                    <rating value="@Model.Product.Rating" class="d-flex justify-content-center small mb-2 stars-container"></rating>
+                }
+
+                @* Cena produktu *@
+                @if (Model.Product.DiscountPercent > 0)
+                {
+                    <span class="text-muted text-decoration-line-through me-1">
+                        @HtmlHelperExtensions.Price(Html, Model.Product.OldPrice.Value)
+                    </span>
+                }
+                @HtmlHelperExtensions.Price(Html, Model.Product.Price)
+            </div>
+        </div>
+
+        <a class="stretched-link" href="~/Produkt/@Model.Product.Url"></a>
+    </div>
+    <div class="d-flex flex-column align-items-end position-absolute top-0 end-0 m-2 gap-1">
+
+        @* Sleva *@
+        @if (Model.Product.DiscountPercent > 0)
+        {
+            <span class="badge bg-dark text-white">Zlevněno</span>
+        }
+        @* Počet kusů *@
+        @if (Model.Product.Stock > 0)
+        {
+            <span class="badge bg-dark text-white">@Model.Product.Stock ks</span>
+        }
+    </div>
+    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex flex-column mt-auto gap-2">
+
+        @* Vložení do košíku *@
+        @if (Model.Product.Stock > 0)
+        {
+            <form asp-controller="Product" asp-action="ProcessCartForm" method="post">
+                <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                <div class="input-group">
+                    <input type="number" class="form-control form-control-sm" name="quantity" value="1" min="1" max="@Model.Product.Stock" />
+                    <button class="btn btn-dark btn-sm w-50 d-inline-block text-truncate" type="submit" name="add_to_cart">
+                        Do košíku
+                    </button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <span class="btn btn-sm btn-dark">
+                Vyprodáno
+            </span>
+        }
+        @* Akce administrátora *@
+        @if (Model.AreProductsEditable && this.Context.User.IsInRole("Admin"))
+        {
+            <form asp-controller="Product" asp-action="ProcessStockForm" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="productId" value="@Model.Product.ProductId" />
+                    <div class="input-group">
+                        <input type="number" class="form-control form-control-sm" name="quantity" value="1" />
+                        <button class="btn btn-outline-dark btn-sm w-50 d-inline-block text-truncate" type="submit" name="add_to_stock">
+                            Naskladnit
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="d-flex gap-1">
+                <a class="btn btn-outline-dark btn-sm mt-auto w-50"
+                   asp-controller="Product" asp-action="ManageProduct"
+                   asp-route-url="@Model.Product.Url">
+                    Upravit
+                </a>
+                <a class="btn btn-outline-dark btn-sm mt-auto w-50"
+                   asp-controller="Product" asp-action="DeleteProduct"
+                   asp-route-productId="@Model.Product.ProductId"
+                   data-confirm="Opravdu si přejete odstranit vybraný produkt?">
+                    Odebrat
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -39,3 +39,32 @@ html {
     border-color: transparent;
     box-shadow: none;
 }
+
+/* Produkty */
+.stars-container {
+    color: var(--accent-color);
+}
+
+.stretched-product-image {
+    background-color: lightgray;
+    object-fit: cover;
+    object-position: center;
+}
+
+.square {
+    aspect-ratio: 1 / 1;
+}
+
+.product-card .card-footer * {
+    z-index: 10;
+}
+
+/* Stránkování */
+.page-item:not(.active):not(.disabled) .page-link {
+    color: black;
+}
+
+.page-item.active .page-link {
+    background-color: black;
+    border-color: black;
+}
