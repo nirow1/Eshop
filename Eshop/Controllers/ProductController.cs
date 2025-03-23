@@ -1,11 +1,13 @@
 ﻿using Eshop.Business.Interfaces;
 using Eshop.Classes;
+using Eshop.Data.Classes;
 using Eshop.Data.Models;
 using Eshop.Extentions;
 using Eshop.Models.ProductViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
+using X.PagedList.Extensions;
 
 namespace Eshop.Controllers
 {
@@ -14,16 +16,12 @@ namespace Eshop.Controllers
     {
         private readonly ICategoryManager categoryManager;
         private readonly IProductManager productManager;
+        private const int PageSize = 12;
 
         public ProductController(ICategoryManager categoryManager, IProductManager productManager)
         {
             this.categoryManager = categoryManager;
             this.productManager = productManager;
-        }
-
-        private List<Category> GetAvailableCategories()
-        {
-            return categoryManager.GetAll().OrderBy(c => c.TitlesPath).ToList();
         }
 
         [HttpGet]
@@ -96,10 +94,50 @@ namespace Eshop.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public void DeleteImage(int productID, int imageIndex)
+        public void DeleteImage(int productID, int imageIndex) 
+            => productManager.RemoveProductImage(productID, imageIndex);
+        
+        public IActionResult Index(int? categoryId, string searchPhrase, int? page, ProductIndexViewModels model)
         {
-            productManager.RemoveProductImage(productID, imageIndex);
-        }
+            if (categoryId.HasValue)
+            {
+                searchPhrase = String.Empty;
+                model.CurrentPhrase = string.Empty;
+                model.CurrentCategoryId = categoryId;
 
+                model.Products = productManager.FindByCategoryId(categoryId.Value).ToPagedList(1, PageSize);
+
+                ViewData["CurrentCategoryTitle"] = categoryManager.GetCategoryById(categoryId.Value).Title;
+            }
+            else if(searchPhrase is not null)
+            {
+                model.Products = productManager.FindBySearchPhrase(searchPhrase).ToPagedList(1, PageSize);
+                model.CurrentPhrase = searchPhrase;
+                model.CurrentCategoryId = null;
+            }
+            else
+            {
+                searchPhrase = model.CurrentPhrase;
+                model.Products = productManager.FindBy(
+                    model.CurrentPhrase,
+                    model.CurrentCategoryId,
+                    model.SortCriteria ?? OrderProductBy.Newest,
+                    model.StartPrice is null ? 0 : model.StartPrice.Value,
+                    model.EndPrice is null ? int.MaxValue : model.EndPrice.Value,
+                    model.InStock
+                    ).ToPagedList(page ?? 1, PageSize);
+                if (model.CurrentCategoryId.HasValue)
+                    ViewData["CurrentCategoryTitle"] = categoryManager.GetCategoryById(model.CurrentCategoryId.Value).Title;
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchPhrase))
+                ViewData["SearchPhrase"] = searchPhrase;
+
+            model.AreProductsEditable = true;
+
+            return View(model);
+        }
+        private List<Category> GetAvailableCategories() 
+            => categoryManager.GetAll().OrderBy(c => c.TitlesPath).ToList();
     }
 }

@@ -32,6 +32,60 @@ namespace Eshop.Extentions
             return html;
         }
 
+        public static IHtmlContent Price(this IHtmlContent helper, decimal price, bool round = false)
+        {
+            price = round ? Math.Round(price) : Math.Round(price, 2);
+            return new HtmlContentBuilder().AppendHtml($"<span>{price} Kč</span>");
+        }
+
+        public static IHtmlContent RenderCategories(this IHtmlHelper helper, IEnumerable<Category> categories,
+                                                string selectedCategoryId = "", int parentCategoryId = 0,
+                                                string parentAccordionId = "", bool show = false)
+        {
+            var accordionId = $"accordion-{parentCategoryId}";
+            var ulTag = CreateCategoryUlTag(parentAccordionId, accordionId, show);
+
+            foreach (var category in categories)
+            {
+                var liTag = new TagBuilder("li");
+
+                if (category.ChildCategories.Count > 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(selectedCategoryId))
+                    {
+                        var categoryId = int.Parse(selectedCategoryId);
+                        show = ContainsCategoryId(category.ChildCategories, categoryId);
+                    }
+
+                    var childAccordionId = $"accordion-{category.CategoryId}";
+                    var buttonTag = CreateCategoryButtonTag(show, childAccordionId);
+
+                    liTag.InnerHtml.SetHtmlContent(buttonTag);
+                    buttonTag.InnerHtml.SetContent(category.Title);
+                    liTag.InnerHtml.AppendHtml(RenderCategories(helper, category.ChildCategories.OrderBy(c => c.OrderNo), selectedCategoryId, category.CategoryId, accordionId, show));
+                }
+                else
+                {
+                    var anchorTag = CreateCategoryAnchorTag(category.Title, category.CategoryId);
+
+                    liTag.AddCssClass("nav-item ms-3 ps-1");
+                    liTag.InnerHtml.SetHtmlContent(anchorTag);
+                }
+
+                ulTag.InnerHtml.AppendHtml(liTag);
+            }
+
+            var allLiTag = new TagBuilder("li");
+            var AllAnchorTag = CreateCategoryAnchorTag("Všechno", parentCategoryId);
+            allLiTag.AddCssClass("nav-item ms-3 ps-1");
+            allLiTag.InnerHtml.SetHtmlContent(AllAnchorTag);
+            ulTag.InnerHtml.AppendHtml(allLiTag);
+
+            var contentBuilder = new HtmlContentBuilder().AppendHtml(ulTag);
+
+            return contentBuilder;
+        }
+
         private static bool ContainsCategoryId(IEnumerable<Category> children, int categoryId)
         {
             return children.Any(c  => c.CategoryId == categoryId || ContainsCategoryId(c.ChildCategories, categoryId));
@@ -83,53 +137,6 @@ namespace Eshop.Extentions
                 ulTag.AddCssClass("show");
 
             return ulTag;
-        }
-        public static IHtmlContent RenderCategories(this IHtmlHelper helper, IEnumerable<Category> categories,
-                                                string selectedCategoryId = "", int parentCategoryId = 0,
-                                                string parentAccordionId = "", bool show = false)
-        {
-            var accordionId = $"accordion-{parentCategoryId}";
-            var ulTag = CreateCategoryUlTag(parentAccordionId, accordionId, show);
-
-            foreach(var category in categories)
-            {
-                var liTag = new TagBuilder("li");
-
-                if(category.ChildCategories.Count > 0)
-                {
-                    if(!string.IsNullOrWhiteSpace(selectedCategoryId))
-                    {
-                        var categoryId = int.Parse(selectedCategoryId);
-                        show = ContainsCategoryId(category.ChildCategories, categoryId);
-                    }
-
-                    var childAccordionId = $"accordion-{category.CategoryId}";
-                    var buttonTag = CreateCategoryButtonTag(show, childAccordionId);
-
-                    liTag.InnerHtml.SetHtmlContent(buttonTag);
-                    buttonTag.InnerHtml.SetContent(category.Title);
-                    liTag.InnerHtml.AppendHtml(RenderCategories(helper, category.ChildCategories.OrderBy(c => c.OrderNo), selectedCategoryId, category.CategoryId, accordionId, show));
-                }
-                else
-                {
-                    var anchorTag = CreateCategoryAnchorTag(category.Title, category.CategoryId);
-
-                    liTag.AddCssClass("nav-item ms-3 ps-1");
-                    liTag.InnerHtml.SetHtmlContent(anchorTag);
-                }
-
-                ulTag.InnerHtml.AppendHtml(liTag);
-            }
-
-            var allLiTag = new TagBuilder("li");
-            var AllAnchorTag = CreateCategoryAnchorTag("Všechno", parentCategoryId);
-            allLiTag.AddCssClass("nav-item ms-3 ps-1");
-            allLiTag.InnerHtml.SetHtmlContent(AllAnchorTag);
-            ulTag.InnerHtml.AppendHtml(allLiTag);
-
-            var contentBuilder = new HtmlContentBuilder().AppendHtml(ulTag);
-
-            return contentBuilder;
         }
     }
 }
