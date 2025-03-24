@@ -2,7 +2,6 @@
 using Eshop.Data.Models;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Runtime.CompilerServices;
 
 namespace Eshop.Extentions
 {
@@ -32,7 +31,7 @@ namespace Eshop.Extentions
             return html;
         }
 
-        public static IHtmlContent Price(this IHtmlContent helper, decimal price, bool round = false)
+        public static IHtmlContent Price(this IHtmlHelper helper, decimal price, bool round = false)
         {
             price = round ? Math.Round(price) : Math.Round(price, 2);
             return new HtmlContentBuilder().AppendHtml($"<span>{price} Kč</span>");

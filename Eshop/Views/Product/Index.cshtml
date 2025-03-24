@@ -1,0 +1,120 @@
+﻿@model Eshop.Models.ProductViewModels.ProductIndexViewModels
+@using X.PagedList.Mvc.Core
+
+@{
+    ViewData["Title"] = "Produkty";
+}
+
+@if (ViewData.ContainsKey("SearchPhrase"))
+{
+    <h2 class="site-heading"> Hledaný výraz: @ViewData["SearchPhrase"] </h2>
+}
+else if (Model.CurrentCategoryId.HasValue)
+{
+    <h2 class="site-heading"> @ViewData["CurrentCategoryTitle"] </h2>
+}
+else
+{
+    <h2 class="site-heading"> Všechny produkty </h2>
+}
+
+@* Část pro přehled kategorií produktů *@
+<div class="col-lg-3">
+    @await Html.PartialAsync("_CategoriesPartial", Model)
+</div>
+
+@* Zbytek obsahu stránky *@
+<div class="col-lg-9 d-flex flex-column">
+    <div class="col-lg-9 d-flex flex-column">
+        <div class="dropdown dropstart align-self-end mb-3">
+            <button class="btn btn-outline-dark dropdown-toggle" id="filterMenuButton" type="button"
+                    title="Filtrovat"
+                    data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-funnel"></i>
+            </button>
+
+            <div class="dropdown-menu" style="min-width: 15rem;" aria-labelledby="filterMenuButton">
+                <form class="d-flex flex-column px-3 py-1 gap-2" asp-action="Index" asp-controller="Product" method="get">
+                    <div class="form-group">
+                        <input asp-for="CurrentCategoryId" type="hidden" />
+                        <input asp-for="CurrentPhrase" type="hidden" />
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="SortCriteria"></label>
+                        <select class="form-select" asp-for="SortCriteria" asp-items="@Model.SortList"></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="StartPrice" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="StartPrice" class="form-control" type="number" placeholder="0.00" step="0.01" min="0" />
+                            <span class="input-group-text">Kč</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="EndPrice" class="control-label"></label>
+                        <div class="input-group">
+                            <input asp-for="EndPrice" class="form-control" type="number" placeholder="0.00" step="0.01" min="0" />
+                            <span class="input-group-text">Kč</span>
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="InStock" type="checkbox" />
+                        <label class="form-check-label" asp-for="InStock"></label>
+                    </div>
+
+                    <button name="filter" id="filter" type="submit" class="btn btn-dark">Filtrovat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Products.Any())
+    {
+        <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2 row-cols-sm-2">
+            @foreach (var product in Model.Products)
+            {
+                <div class="col mb-3">
+                    @{
+                        Model.Product = product;
+                        @await Html.PartialAsync("_ProductThumbnailPartialView", Model)
+                    }
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="mb-5 h5 d-flex justify-content-center text-muted gap-2">
+            <i class="bi bi-bag-x"></i>
+            <span>Žádné produkty nenalezeny</span>
+        </div>
+    }
+
+    <div class="row">
+        @Html.PagedListPager(Model.Products, page => Url.Action("Index", new
+        {
+            page,
+            Model.CurrentCategoryId,
+            Model.CurrentPhrase,
+            Model.StartPrice,
+            Model.EndPrice,
+            Model.SortCriteria,
+            Model.InStock
+        }), new PagedListRenderOptions
+        {
+            Display = PagedListDisplayMode.IfNeeded,
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            UlElementClasses = new[] { "pagination", "justify-content-center" },
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" }
+        })
+    </div>
+</div>
+@section scripts {
+    <script src="~/js/dataConfirm.js"></script>
+}

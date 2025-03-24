@@ -62,6 +62,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}");
+
+app.MapControllerRoute("ProductIndex", "Produkty", defaults: new { controller = "Product", action = "Index", url = "" });
+
 app.MapRazorPages();
 
 await app.RegisterAdmin("admin@eshop.cz", "Admin123");

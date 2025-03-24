@@ -13,7 +13,7 @@ namespace Eshop.Extentions
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-                if (!await roleManager.RoleExistsAsync(adminRoleName))
+                 if (!await roleManager.RoleExistsAsync(adminRoleName))
                     await roleManager.CreateAsync(new IdentityRole(adminRoleName));
 
                 ApplicationUser user = await userManager.FindByEmailAsync(userEmail);
